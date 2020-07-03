@@ -1,4 +1,5 @@
 com\upgrad\quora\api\model\UserDeleteResponse.class
+com\upgrad\quora\api\controller\AdminController.class
 io\swagger\configuration\HomeController.class
 com\upgrad\quora\api\model\AnswerResponse.class
 com\upgrad\quora\api\model\AnswerDetailsResponse.class
