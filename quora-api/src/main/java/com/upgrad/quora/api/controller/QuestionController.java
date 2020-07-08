@@ -46,7 +46,7 @@ public class QuestionController {
     public ResponseEntity<ArrayList> getAllQuestions(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
 
         final List<QuestionEntity> allQuestionsList = questionBusinessService.getAllQuestions(authorization);
-        ArrayList<QuestionDetailsResponse> questionDetailsResponses = convertTotQuestionDetailsResponseArray(allQuestionsList);
+        ArrayList<QuestionDetailsResponse> questionDetailsResponses = convertToQuestionDetailsResponseArray(allQuestionsList);
         return new ResponseEntity<>(questionDetailsResponses, HttpStatus.OK);
     }
 
@@ -88,14 +88,14 @@ public class QuestionController {
 
         final List<QuestionEntity> allQuestionsList = questionBusinessService.getAllQuestionsByUser(userId, authorization);
 
-        ArrayList<QuestionDetailsResponse> questionDetailsResponses = convertTotQuestionDetailsResponseArray(allQuestionsList);
+        ArrayList<QuestionDetailsResponse> questionDetailsResponses = convertToQuestionDetailsResponseArray(allQuestionsList);
         return new ResponseEntity<>(questionDetailsResponses, HttpStatus.OK);
     }
 
     /* *************************** */
     /* Auxiliary (private) Methods */
     /* *************************** */
-    private ArrayList<QuestionDetailsResponse> convertTotQuestionDetailsResponseArray(List<QuestionEntity> allQuestionsList) {
+    private ArrayList<QuestionDetailsResponse> convertToQuestionDetailsResponseArray(List<QuestionEntity> allQuestionsList) {
 
         ArrayList<QuestionDetailsResponse> questionDetailsResponses = new ArrayList<>();
         for (QuestionEntity question: allQuestionsList) {

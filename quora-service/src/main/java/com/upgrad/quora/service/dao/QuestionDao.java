@@ -1,7 +1,6 @@
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.QuestionEntity;
-import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import org.springframework.stereotype.Repository;
 
@@ -44,7 +43,6 @@ public class QuestionDao {
         } catch (NoResultException nre) {
             return null;
         }
-
     }
 
     /* Delete a question by Id */
