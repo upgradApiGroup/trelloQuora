@@ -30,6 +30,15 @@ public class AnswerBusinessService {
     @Autowired
     private UserDao userDao;
 
+    /*
+    This method takes answerEntity, questionId and accessToken as inputs and validates the following:
+    1. User should be signed in
+    2. User should not have signed out after signing in
+    3. Question to be answered, must exist in database
+
+    After the validations, it sets the user ID and question ID for the answer and calls the DAO class method to
+    persist the answer in the database.
+    */
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(AnswerEntity answerEntity, final String questionId, final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
 
@@ -52,6 +61,16 @@ public class AnswerBusinessService {
         return answerDao.createAnswer(answerEntity);
     }
 
+    /*
+    This method takes answerEntity and accessToken as inputs and validates the following:
+    1. User should be signed in
+    2. User should not have signed out after signing in
+    3. Answer to be edited, must exist in database
+    4. Only owner of the answer must edit the answer
+
+    After the validations, it sets the user ID, date and question ID for the answer and calls the DAO class method to
+    merge the answer in the database.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity editAnswer(AnswerEntity answerEntity, final String accessToken) throws AnswerNotFoundException, AuthorizationFailedException {
 
@@ -78,6 +97,15 @@ public class AnswerBusinessService {
         return answerDao.editAnswer(answerEntity);
     }
 
+    /*
+    This method takes answer ID and accessToken as inputs and validates the following:
+    1. User should be signed in
+    2. User should not have signed out after signing in
+    3. Answer to be deleted, must exist in database
+    4. Only owner of the answer, or an admin user must delete the answer
+
+    After the validations, it calls the DAO class method to delete the answer from the database.
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity deleteAnswer(final String answerId, final String accessToken) throws AnswerNotFoundException, AuthorizationFailedException {
 
@@ -100,6 +128,15 @@ public class AnswerBusinessService {
         return answerDao.deleteAnswer(existingAnswer);
     }
 
+    /*
+    This method takes question ID and accessToken as inputs and validates the following:
+    1. User should be signed in
+    2. User should not have signed out after signing in
+    3. The question whose answers are to be retrieved, must exist in database
+
+    After the validations, it calls the DAO class method, to get all the answers for that particular question,
+    from the database.
+     */
     public List<AnswerEntity> getAllAnswersByQuestion(final String questionUuid, final String accessToken) throws InvalidQuestionException, AuthorizationFailedException {
         UserAuthEntity userAuthToken = userDao.getUserAuthByToken(accessToken);
         QuestionEntity question = questionDao.getQuestionById(questionUuid);
@@ -116,10 +153,15 @@ public class AnswerBusinessService {
         return answerDao.getAllAnswersByQuestion(questionUuid);
     }
 
+    /*This method takes the user authentication token object and verifies if the user is an admin*/
+
     public boolean isUserAdmin(UserAuthEntity userAuthToken){
         UserEntity loggedInUser = userAuthToken.getUserId();
         return loggedInUser.getRole().equals("admin");
     }
+
+    /*This method takes the user authentication token object and an answer object and verifies,
+    if the logged-in user is the same as the owner of the answer*/
 
     public boolean isUserOwner(UserAuthEntity userAuthToken, AnswerEntity existingAnswer){
         UserEntity loggedInUser = userAuthToken.getUserId();

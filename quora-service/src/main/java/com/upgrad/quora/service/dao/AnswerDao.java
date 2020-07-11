@@ -14,20 +14,28 @@ public class AnswerDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /*This method creates an answer in the database*/
+
     public AnswerEntity createAnswer(AnswerEntity answerEntity){
         entityManager.persist(answerEntity);
         return answerEntity;
     }
+
+    /*This method updates/edits an answer in the database*/
 
     public AnswerEntity editAnswer(AnswerEntity answerEntity){
         entityManager.merge(answerEntity);
         return answerEntity;
     }
 
+    /*This method deletes an answer from the database*/
+
     public AnswerEntity deleteAnswer(AnswerEntity answerEntity){
         entityManager.remove(answerEntity);
         return answerEntity;
     }
+
+    /*This method returns an answer from the database based on the answer ID*/
 
     public AnswerEntity getAnswerByUuid(final String answerUuid) {
         try{
@@ -37,6 +45,8 @@ public class AnswerDao {
             return null;
         }
     }
+
+    /*This method returns a list of all the answers from the database based on the question ID*/
 
     public List<AnswerEntity> getAllAnswersByQuestion(final String questionUuid) {
         try{
