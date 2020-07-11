@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 public class AnswerBusinessService {
@@ -96,6 +98,22 @@ public class AnswerBusinessService {
         }
 
         return answerDao.deleteAnswer(existingAnswer);
+    }
+
+    public List<AnswerEntity> getAllAnswersByQuestion(final String questionUuid, final String accessToken) throws InvalidQuestionException, AuthorizationFailedException {
+        UserAuthEntity userAuthToken = userDao.getUserAuthByToken(accessToken);
+        QuestionEntity question = questionDao.getQuestionById(questionUuid);
+
+        if(userAuthToken == null){
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        }
+        if(userAuthToken.getLogoutAt() != null) {
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get the answers");
+        }
+        if (question == null) {
+            throw new InvalidQuestionException("QUES-001", "The question with entered uuid whose details are to be seen does not exist");
+        }
+        return answerDao.getAllAnswersByQuestion(questionUuid);
     }
 
     public boolean isUserAdmin(UserAuthEntity userAuthToken){
