@@ -14,25 +14,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class CommonController {
 
-    @Autowired
-    private UserBusinessService userBusinessService;
+  @Autowired
+  private UserBusinessService userBusinessService;
 
-    @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}")
-    public ResponseEntity<UserDetailsResponse> getUserById(@PathVariable("userId") final String userUuid, @RequestHeader("authorization") final String authorization) throws AuthorizationFailedException, UserNotFoundException {
+  @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}")
+  public ResponseEntity<UserDetailsResponse> getUserById(
+      @PathVariable("userId") final String userUuid,
+      @RequestHeader("authorization") final String authorization)
+      throws AuthorizationFailedException, UserNotFoundException {
 
-        UserEntity userById = userBusinessService.getUserProfile(userUuid, authorization);
+    UserEntity userById = userBusinessService.getUserProfile(userUuid, authorization);
 
-        UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
+    UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
 
-        userDetailsResponse.setFirstName(userById.getFirstName());
-        userDetailsResponse.setLastName(userById.getLastName());
-        userDetailsResponse.setUserName(userById.getUserName());
-        userDetailsResponse.setEmailAddress(userById.getEmail());
-        userDetailsResponse.setCountry(userById.getCountry());
-        userDetailsResponse.setAboutMe(userById.getAboutme());
-        userDetailsResponse.setContactNumber(userById.getContactNumber());
-        userDetailsResponse.setDob(userById.getDob());
+    userDetailsResponse.setFirstName(userById.getFirstName());
+    userDetailsResponse.setLastName(userById.getLastName());
+    userDetailsResponse.setUserName(userById.getUserName());
+    userDetailsResponse.setEmailAddress(userById.getEmail());
+    userDetailsResponse.setCountry(userById.getCountry());
+    userDetailsResponse.setAboutMe(userById.getAboutme());
+    userDetailsResponse.setContactNumber(userById.getContactNumber());
+    userDetailsResponse.setDob(userById.getDob());
 
-        return new ResponseEntity<UserDetailsResponse>(userDetailsResponse, HttpStatus.OK);
-    }
+    return new ResponseEntity<UserDetailsResponse>(userDetailsResponse, HttpStatus.OK);
+  }
 }

@@ -15,31 +15,33 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AdminBusinessService {
 
-    @Autowired
-    private UserBusinessService userBusinessService;
+  @Autowired
+  private UserBusinessService userBusinessService;
 
-    @Autowired
-    private AdminDao adminDao;
+  @Autowired
+  private AdminDao adminDao;
 
-    /* Checks if the current user is Admin or not. */
-    private boolean confirmAdmin(final String accessToken) throws AuthorizationFailedException {
-        UserAuthEntity userAuthToken = userBusinessService.getUserbyToken(accessToken);
+  /* Checks if the current user is Admin or not. */
+  private boolean confirmAdmin(final String accessToken) throws AuthorizationFailedException {
+    UserAuthEntity userAuthToken = userBusinessService.getUserbyToken(accessToken);
 
-        if(userAuthToken.getUserId().getRole().equals("admin")){
-            return true;
-        } else {
-            throw new AuthorizationFailedException("ATHR-003", "Unauthorized Access, Entered user is not an admin");
-        }
+    if (userAuthToken.getUserId().getRole().equals("admin")) {
+      return true;
+    } else {
+      throw new AuthorizationFailedException("ATHR-003",
+          "Unauthorized Access, Entered user is not an admin");
     }
+  }
 
-    /* If the Uuid of the user to be deleted is present in the DB, then delete that user. */
-    @Transactional(propagation = Propagation.REQUIRED)
-    public String deleteUser(String accessToken, String userId) throws UserNotFoundException, AuthorizationFailedException {
-        UserEntity userById = userBusinessService.getUserById(userId);
-        if(this.confirmAdmin(accessToken)) {
-            adminDao.deleteUserByUuid(userId);
-        }
-        return userId;
+  /* If the Uuid of the user to be deleted is present in the DB, then delete that user. */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public String deleteUser(String accessToken, String userId)
+      throws UserNotFoundException, AuthorizationFailedException {
+    UserEntity userById = userBusinessService.getUserById(userId);
+    if (this.confirmAdmin(accessToken)) {
+      adminDao.deleteUserByUuid(userId);
     }
+    return userId;
+  }
 
 }
