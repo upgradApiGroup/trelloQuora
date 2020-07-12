@@ -9,6 +9,9 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "answer")
 
+ /**
+  * The Named Queries for extracting data from the DB
+  */
 @NamedQueries(
     {
         @NamedQuery(name = "getAnswerByUuid", query = "select a from AnswerEntity a where a.uuid = :answerUuid"),
@@ -16,6 +19,10 @@ import java.time.ZonedDateTime;
     }
 )
 public class AnswerEntity implements Serializable {
+
+  /**
+   * Various class members which have to be mapped as table columns in the DB
+   */
 
   @Id
   @Column(name = "ID")
@@ -45,6 +52,10 @@ public class AnswerEntity implements Serializable {
   @ManyToOne
   @JoinColumn(name = "QUESTION_ID")
   private QuestionEntity question;
+
+  /**
+   * getter and setter methods
+   */
 
   public int getId() {
     return id;
