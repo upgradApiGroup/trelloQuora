@@ -75,7 +75,6 @@ public class UserController {
    * @return ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK)
    *
    * */
-
   @RequestMapping(method = RequestMethod.POST, path = "signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<SigninResponse> signin(
       @RequestHeader("authorization") final String authorization)

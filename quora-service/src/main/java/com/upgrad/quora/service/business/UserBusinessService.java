@@ -62,7 +62,6 @@ public class UserBusinessService {
    * @exception AuthenticationFailedException
    * @exception UserNotFoundException
    * */
-
   public UserEntity getUserProfile(final String userUuid, final String accessToken)
       throws AuthorizationFailedException, UserNotFoundException {
     getUserbyToken(accessToken);
@@ -128,7 +127,6 @@ public class UserBusinessService {
           .setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
       userAuthEntity.setExpiresAt(expiresAt);
       userAuthEntity.setLoginAt(now);
-
       userDao.createAuthToken(userAuthEntity);
 
       return userAuthEntity;
