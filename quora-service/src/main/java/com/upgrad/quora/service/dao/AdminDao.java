@@ -11,6 +11,11 @@ public class AdminDao {
   @PersistenceContext
   private EntityManager entityManager;
 
+  /** Delete user by uuid method
+   *
+   * @param uuid - uuid of the user is sent to this method for the user to be deleted.
+   *
+   * */
   public void deleteUserByUuid(final String uuid) {
     try {
       entityManager.createNamedQuery("deleteUserById")

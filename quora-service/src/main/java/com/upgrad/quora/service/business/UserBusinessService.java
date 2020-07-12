@@ -21,7 +21,9 @@ public class UserBusinessService {
   @Autowired
   private PasswordCryptographyProvider passwordCryptographyProvider;
 
-  /* Check if the accessToken is present in DB or not. */
+  /**
+   * Check if the accessToken is present in DB or not.
+   */
   public UserAuthEntity getUserbyToken(final String accessToken)
       throws AuthorizationFailedException {
     UserAuthEntity userAuthToken = userDao.getUserAuthByToken(accessToken);
@@ -38,7 +40,12 @@ public class UserBusinessService {
     return userAuthToken;
   }
 
-  /* Check if the UserUUID is present in DB or not. */
+  /**
+   * Check if the UserUUID is present in DB or not.
+   * @param userUuid - uuid of the user
+   * @return userId - this method returns the userId
+   * @exception UserNotFoundException - this exception would be thrown if the entered uuid is not found
+   */
   public UserEntity getUserById(final String userUuid) throws UserNotFoundException {
     UserEntity userId = userDao.getUserById(userUuid);
 
@@ -49,7 +56,12 @@ public class UserBusinessService {
     return userId;
   }
 
-  /* Get the userProfile */
+  /** Get the userProfile
+   * @param userUuid - uuid of the user
+   * @param accessToken - accessToken of the signed in user
+   * @exception AuthenticationFailedException
+   * @exception UserNotFoundException
+   * */
   public UserEntity getUserProfile(final String userUuid, final String accessToken)
       throws AuthorizationFailedException, UserNotFoundException {
     getUserbyToken(accessToken);
@@ -57,6 +69,12 @@ public class UserBusinessService {
     return userById;
   }
 
+  /** User signup method
+   * @param userEntity - userEntity object.
+   * @exception SignOutRestrictedException - If the entered username does not exists in the DB,then
+   *                                         another valid user name needs to be entered.
+   * @return signUpUser - returns signUpUser object,
+   * */
   @Transactional(propagation = Propagation.REQUIRED)
   public UserEntity signup(UserEntity userEntity) throws SignUpRestrictedException {
     if (userDao.isUsernameExists(userEntity.getUserName())) {
@@ -78,6 +96,14 @@ public class UserBusinessService {
     return signUpUser;
   }
 
+  /** User sign-in process
+   * @param username - username of the user trying to signin is passed to this method.
+   * @param password - password of the user trying to signin is passed to this method.
+   * @exception AuthenticationFailedException - If the username and password's hash doesnt match
+   *                                            doesnt match with the one stored in the DB then the
+   *                                            following exception would be thrown.
+   * @return userAuthEntity - userAuthEntity object is returned from this method.
+   * */
   @Transactional(propagation = Propagation.REQUIRED)
   public UserAuthEntity signin(final String username, final String password)
       throws AuthenticationFailedException {
@@ -101,7 +127,6 @@ public class UserBusinessService {
           .setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
       userAuthEntity.setExpiresAt(expiresAt);
       userAuthEntity.setLoginAt(now);
-
       userDao.createAuthToken(userAuthEntity);
 
       return userAuthEntity;
@@ -111,6 +136,14 @@ public class UserBusinessService {
 
   }
 
+  /** User sign-out method
+   * @param accessToken - the accessToken is passed to this method based on which the user is
+   *                    authorized and then a logout date is set against that token in the DB.
+   * @exception  SignOutRestrictedException - If the accessToken passed in this method is not a
+   *                                          valid one, this exception is thrown asking the user
+   *                                          to login again.
+   * @return  uuid - this method returns the uuid of the user once logged out successfully.
+   * */
   @Transactional(propagation = Propagation.REQUIRED)
   public String signout(final String accessToken) throws SignOutRestrictedException {
     ZonedDateTime currentTime = ZonedDateTime.now();

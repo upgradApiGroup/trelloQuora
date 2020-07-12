@@ -18,6 +18,15 @@ public class CommonController {
   private UserBusinessService userBusinessService;
 
   @RequestMapping(method = RequestMethod.GET, path = "/userprofile/{userId}")
+  /** This methods helps in getting the user by submitting the user id.
+   *
+   * @param userUuid
+   * @param authorization
+   * @exception AuthorizationFailedException
+   * @exception UserNotFoundException
+   * @return ResponseEntity<UserDetailsResponse>(userDetailsResponse, HttpStatus.OK)
+   *
+   * */
   public ResponseEntity<UserDetailsResponse> getUserById(
       @PathVariable("userId") final String userUuid,
       @RequestHeader("authorization") final String authorization)

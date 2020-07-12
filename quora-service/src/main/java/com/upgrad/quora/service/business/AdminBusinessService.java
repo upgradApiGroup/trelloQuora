@@ -21,7 +21,13 @@ public class AdminBusinessService {
   @Autowired
   private AdminDao adminDao;
 
-  /* Checks if the current user is Admin or not. */
+  /** Checks if the current user is Admin or not.
+   *
+   * @param accessToken
+   * @exception AuthorizationFailedException
+   * return true
+   *
+   * */
   private boolean confirmAdmin(final String accessToken) throws AuthorizationFailedException {
     UserAuthEntity userAuthToken = userBusinessService.getUserbyToken(accessToken);
 
@@ -33,7 +39,15 @@ public class AdminBusinessService {
     }
   }
 
-  /* If the Uuid of the user to be deleted is present in the DB, then delete that user. */
+  /** If the Uuid of the user to be deleted is present in the DB, then delete that user.
+   *
+   * @param userId
+   * @param accessToken
+   * @exception  UserNotFoundException
+   * @exception  AuthorizationFailedException
+   * @return userId
+   *
+   * */
   @Transactional(propagation = Propagation.REQUIRED)
   public String deleteUser(String accessToken, String userId)
       throws UserNotFoundException, AuthorizationFailedException {
