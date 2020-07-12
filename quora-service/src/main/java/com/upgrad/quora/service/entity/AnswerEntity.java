@@ -9,14 +9,20 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "answer")
 
+ /**
+  * The Named Queries for extracting data from the DB
+  */
 @NamedQueries(
     {
         @NamedQuery(name = "getAnswerByUuid", query = "select a from AnswerEntity a where a.uuid = :answerUuid"),
-        @NamedQuery(name = "getAnswersByQuestion", query = "select a from AnswerEntity a where a.questionId = :questionUuid")
+        @NamedQuery(name = "getAnswersByQuestion", query = "select a from AnswerEntity a where a.question = :question")
     }
 )
 public class AnswerEntity implements Serializable {
 
+  /**
+   * Various class members which have to be mapped as table columns in the DB
+   */
   @Id
   @Column(name = "ID")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,15 +43,18 @@ public class AnswerEntity implements Serializable {
   private ZonedDateTime date;
 
   @NotNull
-  @ManyToOne(cascade = CascadeType.REMOVE)
+  @ManyToOne
   @JoinColumn(name = "USER_ID")
-  private UserEntity userId;
+  private UserEntity user;
 
   @NotNull
-  @ManyToOne(cascade = CascadeType.REMOVE)
+  @ManyToOne
   @JoinColumn(name = "QUESTION_ID")
-  private QuestionEntity questionId;
+  private QuestionEntity question;
 
+  /**
+   * getter and setter methods
+   */
   public int getId() {
     return id;
   }
@@ -78,19 +87,19 @@ public class AnswerEntity implements Serializable {
     this.date = date;
   }
 
-  public UserEntity getUserId() {
-    return userId;
+  public UserEntity getUser() {
+    return user;
   }
 
-  public void setUserId(UserEntity userId) {
-    this.userId = userId;
+  public void setUser(UserEntity user) {
+    this.user = user;
   }
 
-  public QuestionEntity getQuestionId() {
-    return questionId;
+  public QuestionEntity getQuestion() {
+    return question;
   }
 
-  public void setQuestionId(QuestionEntity questionId) {
-    this.questionId = questionId;
+  public void setQuestion(QuestionEntity question) {
+    this.question = question;
   }
 }
