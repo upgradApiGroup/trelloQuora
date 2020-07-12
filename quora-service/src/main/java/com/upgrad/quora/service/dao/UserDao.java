@@ -103,12 +103,6 @@ public class UserDao {
     }
   }
 
-  /* Creates an Auth token in the user_auth DB. */
-  public UserAuthEntity createAuthToken(final UserAuthEntity userAuthEntity) {
-    entityManager.persist(userAuthEntity);
-    return userAuthEntity;
-  }
-
   /** Creates an Auth token in the user_auth DB.
    *
    * @param userAuthEntity - userAuthEntity object value is passed in this method.
