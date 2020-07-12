@@ -27,61 +27,87 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserBusinessService userBusinessService;
+  @Autowired
+  private UserBusinessService userBusinessService;
 
-    /* Signup method for endpoint "/user/signup" */
-    @RequestMapping(method= RequestMethod.POST, path="signup", consumes= MediaType.APPLICATION_JSON_UTF8_VALUE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SignupUserResponse> userSignup(final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
-        final UserEntity userEntity = new UserEntity();
+  /** Signup method for endpoint "/user/signup"
+   *
+   * @param signupUserRequest
+   * @exception SignUpRestrictedException
+   * @return ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED)
+   *
+   * */
+  @RequestMapping(method = RequestMethod.POST, path = "signup",
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<SignupUserResponse> userSignup(final SignupUserRequest signupUserRequest)
+      throws SignUpRestrictedException {
+    final UserEntity userEntity = new UserEntity();
 
-        userEntity.setUuid(UUID.randomUUID().toString());
-        userEntity.setFirstName(signupUserRequest.getFirstName());
-        userEntity.setLastName(signupUserRequest.getLastName());
-        userEntity.setUserName(signupUserRequest.getUserName());
-        userEntity.setEmail(signupUserRequest.getEmailAddress());
-        userEntity.setPassword(signupUserRequest.getPassword());
-        userEntity.setSalt("1234abc");
-        userEntity.setCountry(signupUserRequest.getCountry());
-        userEntity.setAboutme(signupUserRequest.getAboutMe());
-        userEntity.setDob(signupUserRequest.getDob());
-        userEntity.setRole("nonadmin");
-        userEntity.setContactNumber(signupUserRequest.getContactNumber());
+    userEntity.setUuid(UUID.randomUUID().toString());
+    userEntity.setFirstName(signupUserRequest.getFirstName());
+    userEntity.setLastName(signupUserRequest.getLastName());
+    userEntity.setUserName(signupUserRequest.getUserName());
+    userEntity.setEmail(signupUserRequest.getEmailAddress());
+    userEntity.setPassword(signupUserRequest.getPassword());
+    userEntity.setSalt("1234abc");
+    userEntity.setCountry(signupUserRequest.getCountry());
+    userEntity.setAboutme(signupUserRequest.getAboutMe());
+    userEntity.setDob(signupUserRequest.getDob());
+    userEntity.setRole("nonadmin");
+    userEntity.setContactNumber(signupUserRequest.getContactNumber());
 
-        //After setting the attributes of userEntity, pass it to signup() method, to add this object to a persistent context
-        final UserEntity createdUserEntity = userBusinessService.signup(userEntity);
+    /** After setting the attributes of userEntity, pass it to signup() method, to add this object to a persistent context */
+    final UserEntity createdUserEntity = userBusinessService.signup(userEntity);
 
-        //Declaring an object of SignupUserResponse type and set its attributes using createdUserEntity.
-        SignupUserResponse userResponse = new SignupUserResponse().id(createdUserEntity.getUuid()).status("USER SUCCESSFULLY REGISTERED");
+    /** Declaring an object of SignupUserResponse type and set its attributes using createdUserEntity. */
+    SignupUserResponse userResponse = new SignupUserResponse().id(createdUserEntity.getUuid())
+        .status("USER SUCCESSFULLY REGISTERED");
 
-        return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
-    }
+    return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
+  }
 
-    /* SignIn method for endpoint "/user/signin". */
-    @RequestMapping(method = RequestMethod.POST, path = "signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SigninResponse> signin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
-        byte[] decoded = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
-        String decodedText = new String(decoded);
-        String[] decodedArray = decodedText.split(":");
+  /** SignIn method for endpoint "/user/signin".
+   *
+   * @param authorization - Authorization contains of the base64 encoded username and password in
+   *                      the format username:password and is "Basic" is prepend before that.
+   * @exception AuthenticationFailedException
+   * @return ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK)
+   *
+   * */
+  @RequestMapping(method = RequestMethod.POST, path = "signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<SigninResponse> signin(
+      @RequestHeader("authorization") final String authorization)
+      throws AuthenticationFailedException {
+    byte[] decoded = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+    String decodedText = new String(decoded);
+    String[] decodedArray = decodedText.split(":");
 
-        UserAuthEntity userAuthToken = userBusinessService.signin(decodedArray[0], decodedArray[1]);
+    UserAuthEntity userAuthToken = userBusinessService.signin(decodedArray[0], decodedArray[1]);
 
-        SigninResponse signinResponse = new SigninResponse();
+    SigninResponse signinResponse = new SigninResponse();
 
-        signinResponse.setId(userAuthToken.getUserId().getUuid());
-        signinResponse.setMessage("SIGNED IN SUCCESSFULLY");
+    signinResponse.setId(userAuthToken.getUserId().getUuid());
+    signinResponse.setMessage("SIGNED IN SUCCESSFULLY");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("access_token", userAuthToken.getAccessToken());
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("access_token", userAuthToken.getAccessToken());
 
-        return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK );
-    }
+    return new ResponseEntity<SigninResponse>(signinResponse, headers, HttpStatus.OK);
+  }
 
-    /* SignIn method for endpoint "/user/signout". */
-    @RequestMapping(method = RequestMethod.POST, path = "signout")
-    public ResponseEntity<SignoutResponse> signout(@RequestHeader("authorization") final String accessToken) throws SignOutRestrictedException {
-        String signedOutUser = userBusinessService.signout(accessToken);
-        SignoutResponse signoutResponse = new SignoutResponse().id(signedOutUser).message("SIGNED OUT SUCCESSFULLY");
-        return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
-    }
+  /** SignIn method for endpoint "/user/signout".
+   *
+   * @param accessToken
+   * @return ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK)
+   *
+   * */
+  @RequestMapping(method = RequestMethod.POST, path = "signout")
+  public ResponseEntity<SignoutResponse> signout(
+      @RequestHeader("authorization") final String accessToken) throws SignOutRestrictedException {
+    String signedOutUser = userBusinessService.signout(accessToken);
+    SignoutResponse signoutResponse = new SignoutResponse().id(signedOutUser)
+        .message("SIGNED OUT SUCCESSFULLY");
+    return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
+  }
 }
