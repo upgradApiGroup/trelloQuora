@@ -23,7 +23,6 @@ public class AnswerEntity implements Serializable {
   /**
    * Various class members which have to be mapped as table columns in the DB
    */
-
   @Id
   @Column(name = "ID")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +55,6 @@ public class AnswerEntity implements Serializable {
   /**
    * getter and setter methods
    */
-
   public int getId() {
     return id;
   }

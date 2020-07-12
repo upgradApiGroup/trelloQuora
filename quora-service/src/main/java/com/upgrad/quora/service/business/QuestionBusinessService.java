@@ -23,7 +23,16 @@ public class QuestionBusinessService {
   @Autowired
   private QuestionDao questionDao;
 
-  /* Creating a question */
+  /**
+   * Create Question Business Service
+   * @param questionEntity     - accepts QuestionEntity object passed from QuestionController
+   * @param authorizationToken - accepts String containing requester's authorization code
+   * @description Validates if the requester with the passed authorizationToken has signed in
+   * and not signed out. Prepares the questionEntity with the userId from the UserAuthEntity.
+   * Calls the questionDao with the questionEntity as a parameter.
+   * @return QuestionEntity object
+   * @throws AuthorizationFailedException if invalid/expired authorizationToken is used
+   */
   @Transactional(propagation = Propagation.REQUIRED)
   public QuestionEntity createQuestion(QuestionEntity questionEntity,
       final String authorizationToken) throws AuthorizationFailedException {
@@ -40,7 +49,14 @@ public class QuestionBusinessService {
     return questionDao.createQuestion(questionEntity);
   }
 
-  /* Get All Questions */
+  /**
+   * Get All Questions Business Service
+   * @param authorizationToken - accepts String containing requester's authorization code
+   * @description Validates if the requester with the passed authorizationToken has signed in
+   * and not signed out. Calls the questionDao with the questionEntity as a parameter.
+   * @return List of type QuestionEntity
+   * @throws AuthorizationFailedException if invalid/expired authorizationToken is used
+   */
   public List<QuestionEntity> getAllQuestions(final String authorizationToken)
       throws AuthorizationFailedException {
 
@@ -55,7 +71,18 @@ public class QuestionBusinessService {
     return questionDao.getAllQuestions();
   }
 
-  /* Update/edit a question */
+  /**
+   * Edit Question Content Business Service
+   * @param questionEntity     - accepts QuestionEntity object passed from QuestionController
+   * @param authorizationToken - accepts String containing requester's authorization code
+   * @description Validates if the requester with the passed authorizationToken has signed in
+   * and not signed out. Validates the questionId and it's ownership with the requester's
+   * userId. Prepares the questionEntity with other setter methods. Calls the questionDao with the
+   * questionEntity as a parameter.
+   * @return QuestionEntity object
+   * @throws AuthorizationFailedException if invalid/expired authorizationToken is used
+   * @throws InvalidQuestionException if invalid Question ID is used
+   */
   @Transactional(propagation = Propagation.REQUIRED)
   public QuestionEntity editQuestionContent(QuestionEntity questionEntity,
       String authorizationToken)
@@ -81,7 +108,18 @@ public class QuestionBusinessService {
     return questionDao.editQuestionContent(questionEntity);
   }
 
-  /* Delete a question */
+  /**
+   * Delete Question Business Service
+   * @param uuid     - accepts String containing the UUID of the question to be deleted
+   * @param authorizationToken - accepts String containing requester's authorization code
+   * @description Validates if the requester with the passed authorizationToken has signed in
+   * and not signed out. Validates the questionId and it's ownership with the requester's userId,
+   * Or the role of the requester. Prepares the questionEntity with other setter methods.
+   * Calls the questionDao with the questionEntity as a parameter.
+   * @return QuestionEntity object
+   * @throws AuthorizationFailedException if invalid/expired authorizationToken is used
+   * @throws InvalidQuestionException if invalid Question ID is used
+   */
   @Transactional(propagation = Propagation.REQUIRED)
   public String deleteQuestion(String uuid, String authorizationToken)
       throws AuthorizationFailedException, InvalidQuestionException {
@@ -102,7 +140,17 @@ public class QuestionBusinessService {
     return questionDao.deleteQuestion(existingQuestion);
   }
 
-  /* Get questions by Id */
+  /**
+   * Get Question By Id Business Service
+   * @param userId     - accepts String containing the userId of whose questions must be fetched
+   * @param authorizationToken - accepts String containing requester's authorization code
+   * @description Validates if the requester with the passed authorizationToken has signed in
+   * and not signed out. Validates the userId. Calls the questionDao with the
+   * userEntity as a parameter.
+   * @return QuestionEntity object
+   * @throws AuthorizationFailedException if invalid/expired authorizationToken is used
+   * @throws UserNotFoundException if invalid User ID is used
+   */
   public List<QuestionEntity> getAllQuestionsByUser(final String userId,
       final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
@@ -124,21 +172,34 @@ public class QuestionBusinessService {
     return questionDao.getAllQuestionsByUser(existingUser);
   }
 
-  /* *************************** */
-  /* Auxiliary (private) Methods */
-  /* *************************** */
+  /** Auxiliary Method: SignIn validation
+   * @param userAuthToken - accepts UserAuthEntity object from multiple methods in
+   *                      QuestionBusinessService Class
+   * @throws AuthorizationFailedException if userAuthToken is null
+   */
   private void isUserSignedIn(UserAuthEntity userAuthToken) throws AuthorizationFailedException {
     if (userAuthToken == null) {
       throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
     }
   }
 
+  /** Auxiliary Method: Question validation
+   * @param existingQuestion - accepts QuestionEntity from multiple methods in
+   *                         QuestionBusinessService Class
+   * @throws InvalidQuestionException if existingQuestion is null
+   */
   private void isValidQuestion(QuestionEntity existingQuestion) throws InvalidQuestionException {
     if (existingQuestion == null) {
       throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
     }
   }
 
+  /** Auxiliary Method: Question ownership validation
+   * @param userAuthEntity - accepts UserAuthEntity object
+   * @param existingQuestion - accepts QuestionEntity object
+   * @throws AuthorizationFailedException if userId of both the requester and
+   * the question do not match.
+   */
   private void isValidOwner(UserAuthEntity userAuthEntity, QuestionEntity existingQuestion)
       throws AuthorizationFailedException {
     if (!userAuthEntity.getUserId().equals(existingQuestion.getUserId())) {
@@ -147,6 +208,12 @@ public class QuestionBusinessService {
     }
   }
 
+  /** Auxiliary Method: Question ownership validation
+   * @param userAuthEntity - accepts UserAuthEntity object
+   * @param existingQuestion - accepts QuestionEntity object
+   * @throws AuthorizationFailedException if userId of both the requester and
+   * the question do not match, AND if the requester is not the 'admin'
+   */
   private void isOwnerOrAdmin(UserAuthEntity userAuthEntity, QuestionEntity existingQuestion)
       throws AuthorizationFailedException {
     boolean isOwner = userAuthEntity.getUserId().equals(existingQuestion.getUserId());

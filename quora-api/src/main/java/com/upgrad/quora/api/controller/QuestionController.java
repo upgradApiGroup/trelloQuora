@@ -24,8 +24,17 @@ public class QuestionController {
   @Autowired
   private QuestionBusinessService questionBusinessService;
 
-  /* Create Question Controller*/
-  @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  /**
+   * Create Question Controller
+   * @param questionRequest - accepts QuestionRequest object
+   * @param authorization   - accepts authorization code of signed in user
+   * @description Creates a QuestionEntity object. Calls QuestionBusinessService, passes the object
+   * @return The UUID of the question created as part of QuestionResponse object
+   * @exception AuthorizationFailedException if invalid credentials are used by the requester
+   */
+  @RequestMapping(method = RequestMethod.POST, path = "/question/create",
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<QuestionResponse> createQuestion(final QuestionRequest questionRequest,
       @RequestHeader("authorization") final String authorization)
       throws AuthorizationFailedException {
@@ -43,8 +52,15 @@ public class QuestionController {
     return new ResponseEntity<QuestionResponse>(createQuestionResponse, HttpStatus.CREATED);
   }
 
-  /* Get All Questions*/
-  @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  /**
+   * Get All Questions Controller
+   * @param authorization - accepts authorization code of signed in user.
+   * @description Calls the QuestionBusinessService, passes authorization as a parameter
+   * @return Returns all questions from the database after validating the user request
+   * @throws AuthorizationFailedException if invalid credentials are used by the requester
+   */
+  @RequestMapping(method = RequestMethod.GET, path = "/question/all",
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<ArrayList> getAllQuestions(
       @RequestHeader("authorization") final String authorization)
       throws AuthorizationFailedException {
@@ -56,7 +72,17 @@ public class QuestionController {
     return new ResponseEntity<>(questionDetailsResponses, HttpStatus.OK);
   }
 
-  /* Edit Question Controller */
+  /**
+   * Edit Question Controller
+   * @param questionEditRequest - accepts QuestionEditRequest Object
+   * @param authorization       - accepts authorization code of signed in user
+   * @param questionId          - accepts questionId from path passed on as a variable
+   * @description Updates the content of the question with the specified questionId, with the
+   * content passed on in the EditQuestionRequest object
+   * @return The UUID of the question updated as part of QuestionResponse object
+   * @throws AuthorizationFailedException if invalid credentials are used by the requester
+   * @throws InvalidQuestionException if invalid question Id is used by the requester
+   */
   @RequestMapping(method = RequestMethod.PUT, path = "/question/edit/{questionId}",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -77,7 +103,15 @@ public class QuestionController {
     return new ResponseEntity<QuestionEditResponse>(questionEditResponse, HttpStatus.OK);
   }
 
-  /* Delete Question Controller */
+  /**
+   * Delete Question Controller
+   * @param authorization - accepts authorization code of signed in user
+   * @param questionId    - accepts questionId from path passed on as a variable
+   * @description Calls the QuestionBusinessService and passes the questionId to be deleted
+   * @return The UUID of the question updated as part of QuestionResponse object
+   * @throws AuthorizationFailedException if invalid credentials are used by the requester
+   * @throws InvalidQuestionException if invalid question Id is used by the requester
+   */
   @RequestMapping(method = RequestMethod.DELETE, path = "/question/delete/{questionId}")
   public ResponseEntity<QuestionDeleteResponse> deleteQuestion(
       @PathVariable("questionId") final String questionId,
@@ -89,7 +123,16 @@ public class QuestionController {
     return new ResponseEntity<QuestionDeleteResponse>(questionDeleteResponse, HttpStatus.OK);
   }
 
-  /* Get All Questions of a user */
+  /**
+   * Get All Questions of a user
+   * @param userId        - accepts the userId from the path passed on as a variable
+   * @param authorization - accepts authorization code of signed in user
+   * @description Calls the QuestionBusinessService and passed the userId whose questions
+   * are to be fetched
+   * @return Returns all questions of specific user from the DB after validating the user request
+   * @throws AuthorizationFailedException if invalid credentials are used by the requester
+   * @throws UserNotFoundException is invalid userId is passed
+   */
   @RequestMapping(method = RequestMethod.GET, path = "question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<ArrayList> getAllQuestionsByUser(
       @PathVariable("userId") final String userId,
@@ -104,9 +147,13 @@ public class QuestionController {
     return new ResponseEntity<>(questionDetailsResponses, HttpStatus.OK);
   }
 
-  /* *************************** */
-  /* Auxiliary (private) Methods */
-  /* *************************** */
+  /**
+   * Auxiliary (private) Methods
+   * @param allQuestionsList - accepts the List object of type QuestionEntity Converts into an
+   * @description ArrayList of type QuestionDetailsResponse so that it can form the ResponseEntity
+   * of getAllQuestions() and getAllQuestionsByUser() Controller methods
+   * @return ArrayList of type QuestionDetailsResponse
+   */
   private ArrayList<QuestionDetailsResponse> convertToQuestionDetailsResponseArray(
       List<QuestionEntity> allQuestionsList) {
 

@@ -22,7 +22,6 @@ public class AnswerDao {
    *
    * @return newly created AnswerEntity object
    * */
-
   public AnswerEntity createAnswer(AnswerEntity answerEntity) {
     entityManager.persist(answerEntity);
     return answerEntity;
@@ -35,7 +34,6 @@ public class AnswerDao {
    *
    * @return updated AnswerEntity object
    * */
-
   public AnswerEntity editAnswer(AnswerEntity answerEntity) {
     entityManager.merge(answerEntity);
     return answerEntity;
@@ -48,7 +46,6 @@ public class AnswerDao {
    *
    * @return the AnswerEntity object which was deleted from the DB
    */
-
   public AnswerEntity deleteAnswer(AnswerEntity answerEntity) {
     entityManager.remove(answerEntity);
     return answerEntity;
@@ -61,7 +58,6 @@ public class AnswerDao {
    *
    * @return AnswerEntity object
    */
-
   public AnswerEntity getAnswerByUuid(final String answerUuid) {
     try {
       return entityManager.createNamedQuery("getAnswerByUuid", AnswerEntity.class)

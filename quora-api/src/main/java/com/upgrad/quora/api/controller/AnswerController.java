@@ -24,6 +24,7 @@ public class AnswerController {
   @Autowired
   private AnswerBusinessService answerBusinessService;
 
+
   /**
    * Create Answer Controller
    * @param answerRequest - accepts AnswerRequest object
@@ -54,6 +55,7 @@ public class AnswerController {
 
     final AnswerEntity createdAnswerEntity = answerBusinessService
         .createAnswer(answerEntity, questionUuid, accessToken);
+
     AnswerResponse answerResponse = new AnswerResponse().id(createdAnswerEntity.getUuid())
         .status("ANSWER CREATED");
 
@@ -77,6 +79,7 @@ public class AnswerController {
   @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}",
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+
 
   public ResponseEntity<AnswerEditResponse> editAnswerContent(
       final AnswerEditRequest answerEditRequest,
@@ -114,13 +117,14 @@ public class AnswerController {
       @PathVariable("answerId") final String answerId,
       @RequestHeader("authorization") final String accessToken)
       throws AuthorizationFailedException, AnswerNotFoundException {
-
+    
     AnswerEntity deletedAnswer = answerBusinessService.deleteAnswer(answerId, accessToken);
     AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse()
         .id(deletedAnswer.getUuid()).status("ANSWER DELETED");
 
     return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
   }
+
 
   /**
    * Get All Answers to a question
